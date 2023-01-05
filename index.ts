@@ -15,7 +15,7 @@ const fetchProduct = (id: string) => {
 
 // Resource: users/{id}
 const fetchUser = (id: string) => {
-  return apiClient.get(`users/{id}`);
+  return apiClient.get(`users/${id}`);
 };
 
 const main = async () => {
@@ -29,7 +29,7 @@ const main = async () => {
     })
   ).catch((e) => console.error(e));
 
-  console.log(carts, user, products);
+  console.log(carts, user, products, '////////');
 };
 
 main();
