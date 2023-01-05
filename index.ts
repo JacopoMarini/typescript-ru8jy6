@@ -23,7 +23,11 @@ const main = async () => {
 
   const user = await fetchUser(carts.userId);
 
-  const products = await fetchProduct(carts.productId);
+  const products = await Promise.all(
+    carts.products.map(({ productId }: any) => {
+      return fetchProduct(productId);
+    })
+  ).catch((e) => console.error(e));
 
   console.log(carts, user, products);
 };
