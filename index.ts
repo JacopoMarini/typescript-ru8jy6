@@ -4,7 +4,7 @@ let loading = false;
 
 // Resource: carts?limit=3
 const fetchCarts = () => {
-  return apiClient.get('carts?limit=3');
+  return apiClient.get('carts?limit=1');
 };
 
 // Resource: products/{id}
@@ -20,19 +20,15 @@ const fetchUser = (id: string) => {
 
 const main = async () => {
   const [carts] = await fetchCarts();
+  console.log(carts);
 
-  const user = await fetchUser(carts.userId);
-
-  const products = await Promise.all(
-    carts.products.map(({ productId }: any) => {
-      return fetchProduct(productId);
-    })
-  ).catch((e) => console.error(e));
-
-  console.log(carts, user, products, '////////');
+  for (const product of carts.products) {
+    console.log(product);
+  }
 };
 
 main();
+
 // 1. Recuperare i carrelli (carts)
 
 // 2. Ricostruire il carrello recuperando 'userId' e 'productId' per ogni carrello
