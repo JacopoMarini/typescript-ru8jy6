@@ -1,40 +1,45 @@
-import { apiClient } from './api-client';
-
+import { apiClient } from './apiClient';
 let loading = false;
-
-// Resource: carts?limit=3
-const fetchCarts = () => {
-  return apiClient.get('carts?limit=1');
+const fetchCarts = async () => {
+  const carts = await apiClient.get('carts?limit=3');
+  return carts;
 };
-
-// Resource: products/{id}
-const fetchProduct = (id: string) => {
+const fetchProductById = async (id: string) => {
   if (Math.random() > 0.8) throw new Error('Network error');
-  return apiClient.get(`products/${id}`);
+  const product = await apiClient.get(`products/${id}`);
+  return product;
 };
-
-// Resource: users/{id}
 const fetchUser = (id: string) => {
   return apiClient.get(`users/${id}`);
 };
-
-const main = async () => {
-  const [carts] = await fetchCarts();
-  console.log(carts);
-
-  for (const product of carts.products) {
-    console.log(product);
-  }
-};
-
-main();
-
 // 1. Recuperare i carrelli (carts)
-
+const simpleMain = async () => {
+  const carts = await fetchCarts();
+  console.log('simpleMain: ', carts);
+};
 // 2. Ricostruire il carrello recuperando 'userId' e 'productId' per ogni carrello
-
+const getFullCarts = async () => {
+  const carts = await fetchCarts();
+  const newCarts = [...carts];
+  for (const cart of newCarts) {
+    cart.user = await fetchUser(cart.userId);
+    const products = await Promise.all(
+      cart.products.map(({ productId }: any) => fetchProductById(productId))
+    );
+    cart.products = products.map((p: any, i: any) => ({
+      product: p,
+      quantity: cart.products[i].quantity,
+    }));
+  }
+  return newCarts;
+};
 // 3. Gestire correttamente il loading
-
-// 4. Gestire correttamente gli errori visualizzando un alert
-
-// 5. Creare un array con top 3 prodotti più comprati
+const loadingFullCarts = async () => {
+  let loading = true;
+  console.log('...loading', loading);
+  const carts = await getFullCarts();
+  console.log(carts);
+  loading = false;
+  console.log('...done!', loading);
+};
+loadingFullCarts();
