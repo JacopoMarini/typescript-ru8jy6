@@ -1,4 +1,4 @@
-import { apiClient } from './apiClient';
+import { apiClient } from './api-client';
 let loading = false;
 const fetchCarts = async () => {
   const carts = await apiClient.get('carts?limit=3');
